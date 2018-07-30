@@ -1,0 +1,18 @@
+<div class="col-sm-4"></div>
+<div class="col-sm-4 login-form">
+  <div class="form-group">
+    <label for="userName">User Name</label>
+    <input type="text" id="userName" class="form-control" autocomplete="false" [(ngModel)]="userName">
+
+    <br>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" class="form-control" [(ngModel)]="password">
+
+    <br><br>
+
+    <button class="btn btn-lg btn-primary" (click)="doLogin()">Login</button>
+  </div>
+
+</div>
+<div class="col-sm-4"></div>

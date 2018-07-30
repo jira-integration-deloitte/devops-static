@@ -1,0 +1,70 @@
+<div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10 title-bar section">
+        Welcome, {{userFullName}}
+        <p class="text-center">Total story points - {{totalStoryPoints}}</p>
+    </div>
+    <div class="col-sm-1"></div>
+</div>
+<div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10 section">
+        <div class="col-sm-12 select-section">
+          <div class="col-sm-3"></div>
+
+          <div class="col-sm-3 text-right">
+            <select class="form-control" [(ngModel)]="boardId" (change)="loadSprints()" id="select-board">
+              <option *ngFor="let board of boards" value="{{board.id}}" [selected]="board.id === 'x'">{{board.name +  (board.location ? ' - ' + board.location.name : '')}}</option>
+            </select>
+          </div>
+
+
+          <div class="col-sm-3 text-left">
+            <select class="form-control" id="issues" [(ngModel)]="sprintId" id="select-sprint">
+              <option *ngFor="let sprint of sprints" value="{{sprint.id}}" [selected] = "sprint.id === 'x'" >{{sprint.name}}</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <button class="btn btn-md btn-primary" (click)="loadStories()">Get Stories</button>
+          </div>
+        </div>
+    </div>
+    <div class="col-sm-1"></div>
+</div>
+
+    <div class="row" *ngIf="errorMessage">
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4 error-message">
+        {{errorMessage}}
+      </div>
+      <div class="col-sm-4"></div>
+    </div>
+    <div *ngIf="!errorMessage">
+        <table class="table table-responsive table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center">Project name</th>
+                    <th class="text-center">Sprint</th>
+                    <th class="text-center">Story description</th>
+                    <th class="text-center">Points assigned</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+      <div *ngFor="let story of stories; let i = index">
+        <div class="col-sm-5 story-section" [ngClass]= 'i%2==0 ? "story-section-left" : "story-section-right"'>
+          <div class="story-header" [style.background] = "story.statusColor" [style.color]="(story.statusColor === undefined || story.statusColor === 'yellow' || story.statusColor === 'white') ? 'black' : 'white'">
+            {{story.name}}
+          </div>
+          <div class="story-description">
+            <p class="desc-section"><b>Description : </b> {{story.description}}</p>
+            <p class="desc-section"><img [src]="story.urlSm" alt="Assigned to :">&nbsp;&nbsp; {{story.assignedTo}}</p>
+            <p class="desc-section"><b>Status      : </b> {{story.status}} &nbsp;&nbsp;&nbsp;&nbsp; <b>Story Points : </b> {{story.storyPoint}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<google-chart [data]="pieChartData"></google-chart>
