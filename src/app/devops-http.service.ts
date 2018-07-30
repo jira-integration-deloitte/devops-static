@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Board} from './report/board';
 
 @Injectable({
   providedIn: 'root'
@@ -11,5 +10,9 @@ export class DevopsHttpService {
 
   getData(url) {
     return this.http.get(url);
+  }
+
+  postData(url, data) {
+    return this.http.post(url, data);
   }
 }
