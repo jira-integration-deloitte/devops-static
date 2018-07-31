@@ -9,6 +9,7 @@ import {FormsModule} from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import {RouterModule, Routes} from '@angular/router';
 import {Ng2GoogleChartsModule} from 'ng2-google-charts';
+import {LocationStrategy, PathLocationStrategy} from '@angular/common';
 const appRoutes: Routes = [
     {
         path: '',
@@ -35,7 +36,11 @@ const appRoutes: Routes = [
   ],
   providers: [
     HttpClient,
-    DevopsHttpService
+    DevopsHttpService,
+    {
+        provide: LocationStrategy,
+        useClass: PathLocationStrategy
+    }
   ],
   bootstrap: [AppComponent]
 })
