@@ -18,6 +18,8 @@ export class ReportComponent implements OnInit {
   totalStoryPoints = 0;
   userFullName: String;
   loaderVisibility = false;
+  showData: String;
+  currentStatus: String;
 
   pieChartData =  {
       chartType: 'PieChart',
@@ -34,6 +36,7 @@ export class ReportComponent implements OnInit {
     this.loadUser();
     this.loadBoards();
     this.loaderVisibility = false;
+    this.showData = 'hidden';
   }
 
   loadUser() {
@@ -49,27 +52,46 @@ export class ReportComponent implements OnInit {
     data.subscribe((resp: any) => {
         if (resp != null) {
           this.boards = resp.values;
-          this.boards.push(JSON.parse('{"id":"x", "name":"--Select Board--"}'));
         }
-    });
+    },
+        err => {
+            console.log('Error while fetching boards');
+            console.log(err);
+            this.errorMessage = err.toString();
+        });
   }
 
   loadSprints() {
+      this.currentStatus = 'Fetching sprints';
+      this.showData = 'hidden';
+      this.showLoader();
       console.log('Selected board - ' + this.boardId);
        const url = 'http://localhost:8088/devops-service/board/' + this.boardId + '/sprints';
         const data = this.devopService.getData(url);
         this.errorMessage = null;
         this.stories = [];
         this.sprints = [];
-        data.subscribe((resp: any) => {
-          if (resp != null) {
-            this.sprints = resp.values;
-            this.sprints.push(JSON.parse('{"id":"x", "name":"--Select Sprint--"}'));
-          }
-        });
+        this.sprintId = undefined;
+        data.subscribe(
+            (resp: any) => {
+                      if (resp != null) {
+                        this.sprints = resp.values;
+                        this.currentStatus = 'Arranging sprints';
+                      }
+                      this.currentStatus = 'Done';
+                      this.hideLoader();
+                    },
+            (error: any) => {
+                        console.log('Error occurred');
+                        console.log(error);
+                        this.hideLoader();
+            });
   }
 
   loadStories() {
+      this.currentStatus = 'Fetching stories';
+      this.showData = 'hidden';
+      this.showLoader();
       const chartData = this.pieChartData.dataTable;
       this.clearDataTable();
       this.totalStoryPoints = 0;
@@ -79,22 +101,32 @@ export class ReportComponent implements OnInit {
 
       this.errorMessage = null;
       this.stories = [];
+
       const url = 'http://localhost:8088/devops-service/board/' + this.boardId + '/sprint/' + this.sprintId + '/stories';
       const data = this.devopService.getData(url);
 
-      data.subscribe((resp: any) => {
-          if (resp !== null) {
-            this.stories = resp.issues;
+      data.subscribe(
+          (resp: any) => {
+              this.currentStatus = 'Arranging stories';
+              this.showData = 'visible';
+              if (resp !== null) {
+                  this.stories = resp.issues;
+              }
+              for (const issue of this.stories) {
+                  this.totalStoryPoints = this.totalStoryPoints + issue.storyPoint;
+                  this.prepareChart(issue, chartData);
+              }
+              if (this.stories.length === 0) {
+                  this.errorMessage = 'No story was found for the selected sprint.';
+              }
+              this.hideLoader();
+          },
+          (error: any) => {
+            console.log('Error occurred');
+            console.log(error);
+            this.hideLoader();
           }
-          for (const issue of this.stories) {
-              this.totalStoryPoints = this.totalStoryPoints + issue.storyPoint;
-              this.prepareChart(issue, chartData);
-          }
-          console.log(this.stories);
-          if (this.stories.length === 0) {
-              this.errorMessage = 'No story was found for the selected sprint.';
-          }
-    });
+      );
       console.log('Chart data');
       console.log(this.pieChartData);
   }
@@ -131,6 +163,13 @@ export class ReportComponent implements OnInit {
               return sprint.name;
           }
       }
+    }
+
+    showLoader() {
+        document.getElementById('open-modal-btn').click();
+    }
+    hideLoader() {
+        document.getElementById('close-modal-btn').click();
     }
 
 
