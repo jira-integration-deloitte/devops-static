@@ -8,7 +8,7 @@ import {AppComponent} from '../app.component';
   styleUrls: ['./report.component.css']
 })
 export class ReportComponent implements OnInit {
-
+  static MSG = 'Select board and sprint to view stories';
   boards: Array<any> = [];
   stories: Array<any> = [];
   sprints: Array<any> = [];
@@ -20,7 +20,8 @@ export class ReportComponent implements OnInit {
   loaderVisibility = false;
   showData: String;
   currentStatus: String;
-
+  showGraph = false;
+  initMessage = ReportComponent.MSG;
   pieChartData =  {
       chartType: 'PieChart',
       dataTable: [
@@ -44,6 +45,7 @@ export class ReportComponent implements OnInit {
   }
 
   loadBoards() {
+    this.initMessage = ReportComponent.MSG;
     console.log('all board component loaded..');
     const data = this.devopService.getData('http://localhost:8088/devops-service/allboards');
     this.boards = [];
@@ -62,6 +64,8 @@ export class ReportComponent implements OnInit {
   }
 
   loadSprints() {
+      this.initMessage = ReportComponent.MSG;
+      this.showGraph = false;
       this.currentStatus = 'Fetching sprints';
       this.showData = 'hidden';
       this.showLoader();
@@ -89,6 +93,8 @@ export class ReportComponent implements OnInit {
   }
 
   loadStories() {
+      this.initMessage = ReportComponent.MSG;
+      this.showGraph = false;
       this.currentStatus = 'Fetching stories';
       this.showData = 'hidden';
       this.showLoader();
@@ -118,11 +124,17 @@ export class ReportComponent implements OnInit {
               }
               if (this.stories.length === 0) {
                   this.errorMessage = 'No story was found for the selected sprint.';
+                  this.showGraph = false;
+              } else {
+                  this.showGraph = true;
               }
+              this.initMessage = undefined;
               this.hideLoader();
           },
           (error: any) => {
             console.log('Error occurred');
+            this.errorMessage = error.toString();
+            this.initMessage = undefined;
             console.log(error);
             this.hideLoader();
           }
