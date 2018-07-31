@@ -63,3 +63,14 @@
 .story-details {
   margin-top: 10px;
 }
+thead {
+  background: linear-gradient(to bottom, #000000, #a8a8a8);
+  padding: 8px;
+  color: #f3f3f3;
+  font-size: medium;
+  height: 120px;
+}
+
+.modal-text {
+  margin-left: 110px;
+}
