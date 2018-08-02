@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {DevopsHttpService} from '../devops-http.service';
-import {AppComponent} from '../app.component';
+import {Snapshot} from '../snapshot';
+import {KeyValue} from '../key-value';
+declare  var $;
 
 @Component({
   selector: 'app-report',
@@ -22,13 +24,43 @@ export class ReportComponent implements OnInit {
   currentStatus: String;
   showGraph = false;
   initMessage = ReportComponent.MSG;
-  pieChartData =  {
-      chartType: 'PieChart',
-      dataTable: [
-          ['Story type', 'Points']
-      ],
-      options: {'title': 'Tasks'}
-};
+
+  totalNumberOfStories = 0;
+  snapBoard = new Array<Snapshot>();
+
+/*  barChart = new Chart('barChart', {
+      type: 'bar',
+      data: {
+          labels: ['Approved', 'Ready to test', 'Pending'],
+          datasets: [
+              {
+                  label: 'Story status',
+                  data: [30, 40, 12],
+                  fill: false,
+                  lineTension: 0.2,
+                  borderColor: 'red',
+                  borderWidth: 1
+              }
+          ]
+      },
+      options: {
+          title: {
+              text: 'Bar Chart',
+              display: true
+          },
+          scales: {
+              yAxes: [
+                  {
+                      ticks: {
+                          beginAtZero: true
+                      }
+                  }
+               ]
+          }
+
+      }
+  });*/
+
 
   constructor(private devopService: DevopsHttpService) { }
 
@@ -69,6 +101,8 @@ export class ReportComponent implements OnInit {
       this.currentStatus = 'Fetching sprints';
       this.showData = 'hidden';
       this.showLoader();
+      this.snapBoard = new Array<Snapshot>();
+
       console.log('Selected board - ' + this.boardId);
        const url = 'http://localhost:8088/devops-service/board/' + this.boardId + '/sprints';
         const data = this.devopService.getData(url);
@@ -89,6 +123,8 @@ export class ReportComponent implements OnInit {
                         console.log('Error occurred');
                         console.log(error);
                         this.hideLoader();
+                        this.errorMessage = 'This project does not have any sprint.'; /* error.toString(); */
+                        this.initMessage = undefined;
             });
   }
 
@@ -98,9 +134,12 @@ export class ReportComponent implements OnInit {
       this.currentStatus = 'Fetching stories';
       this.showData = 'hidden';
       this.showLoader();
-      const chartData = this.pieChartData.dataTable;
       this.clearDataTable();
       this.totalStoryPoints = 0;
+      this.snapBoard = new Array<Snapshot>();
+
+      const sprintPoint = new Snapshot('Sprint wise points division');
+      const statusPoint = new Snapshot('Status wise points division');
 
       this.loaderVisibility = true;
       console.log('Selected sprint - ' + this.sprintId);
@@ -119,8 +158,10 @@ export class ReportComponent implements OnInit {
                   this.stories = resp.issues;
               }
               for (const issue of this.stories) {
+                  console.log('Looping after response -- ' + this.stories.length);
                   this.totalStoryPoints = this.totalStoryPoints + issue.storyPoint;
-                  this.prepareChart(issue, chartData);
+                  this.prepareSnapshot(sprintPoint.Data, issue.sprintName, issue.storyPoint);
+                  this.prepareSnapshot(statusPoint.Data, issue.status, issue.storyPoint);
               }
               if (this.stories.length === 0) {
                   this.errorMessage = 'No story was found for the selected sprint.';
@@ -137,36 +178,19 @@ export class ReportComponent implements OnInit {
             this.initMessage = undefined;
             console.log(error);
             this.hideLoader();
+          },
+          () => {
+              console.log(sprintPoint);
+              this.snapBoard.push(sprintPoint);
+              this.snapBoard.push(statusPoint);
           }
       );
-      console.log('Chart data');
-      console.log(this.pieChartData);
   }
-    private prepareChart(issue: any, chartData: any[]) {
-      const status = issue.status;
-      let found = false;
-      const storyPoint = issue.storyPoint;
-      for (const data of chartData) {
-         const name = data[0];
-         if (name === status) {
-             data[1] = data[1] + storyPoint;
-             found = true;
-         }
-      }
-      if (!found) {
-         const data = [status, storyPoint];
-         chartData.push(data);
-      }
+    private prepareChart(issue: any) {
+
     }
 
     clearDataTable() {
-      if (this.pieChartData.dataTable.length > 1) {
-          const len = this.pieChartData.dataTable.length;
-          for (let i = 0; i < len - 1; i++) {
-              this.pieChartData.dataTable.pop();
-          }
-          console.log('Table data cleared');
-      }
     }
 
     getSprintName(sprintId: String) {
@@ -178,10 +202,28 @@ export class ReportComponent implements OnInit {
     }
 
     showLoader() {
-        document.getElementById('open-modal-btn').click();
+        $('#open-modal-btn').click();
     }
     hideLoader() {
-        document.getElementById('close-modal-btn').click();
+        $('#close-modal-btn').click();
+    }
+
+    prepareSnapshot(data: KeyValue[], key, value) {
+      const sprint = key;
+      const storyPoint = value;
+      let found = false;
+      for (let i = 0; i < data.length; i++) {
+          const snap = data[i];
+          if (snap.Key === key) {
+              const oldVal = snap.Value;
+              snap.Value = oldVal + value;
+              found = true;
+          }
+      }
+      if (!found) {
+         const snap = new KeyValue(key, value);
+          data.push(snap);
+      }
     }
 
 

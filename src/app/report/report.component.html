@@ -13,7 +13,7 @@
         <!-- Application Info -->
         <!--<div class="col-sm-12 task-pane-section-small"></div>-->
         <!-- User Info -->
-        <div class="col-sm-12 task-pane-section-medium text-right name-section text-x-large">
+        <div class="col-sm-12 task-pane-section-small text-right name-section text-x-large">
             <a class="title-bar" href="report#" style="color: #3498db;"><span class="glyphicon glyphicon-user" style="margin-right: 10px;"></span>{{userFullName}}</a>
         </div>
         <!-- Select board -->
@@ -24,26 +24,49 @@
             </select>
         </div>
         <!-- Select Sprint -->
-        <div class="col-sm-12 text-right task-pane-section-large text-medium">
+        <div class="col-sm-12 text-right task-pane-section-x-large text-medium">
             <label for="select-sprint" class="text-right">Select sprint &nbsp;<span class="glyphicon" [ngClass]="sprintId !== undefined ? 'glyphicon-ok' : 'hidden'" style="color: chartreuse;"></span></label>
-            <select class="form-control" id="issues" [(ngModel)]="sprintId" id="select-sprint" multiple>
+            <select class="form-control text-right" id="issues" [(ngModel)]="sprintId" id="select-sprint" multiple size="8">
                 <option *ngFor="let sprint of sprints" value="{{sprint.id}}">{{sprint.name}}</option>
             </select>
         </div>
 
         <!-- Buttons -->
-        <div class="col-sm-12 text-right task-pane-section-medium">
-            <button class="btn btn-md btn-primary" (click)="loadStories()" [disabled]="sprintId === undefined">Get Stories</button>
-            &nbsp;&nbsp;&nbsp;
-            <button class="btn btn-md btn-info" [disabled]="!showGraph">Show Graph</button>
+        <div class="col-sm-12 task-pane-section-small btn-group text-right">
+            <button class="btn btn-sm btn-primary" (click)="loadStories()" [disabled]="sprintId === undefined">Get Stories</button>
+            &nbsp;&nbsp;&nbsp;<!--[disabled]="!showGraph"-->
+            <button class="btn btn-sm btn-info" [disabled]="!showGraph" data-toggle="modal" data-target="#modal-graph">Show Graph</button>
+            <button class="btn btn-sm btn-primary" [disabled]="!showGraph" data-toggle="modal" data-target="#modal-graph">Download</button>
         </div>
 
         <!-- Total story points -->
-        <div class="col-sm-12 title-bar task-pane-section-medium text-right text-x-large" style="color: #3498db;">
+        <div class="col-sm-12 title-bar task-pane-section-small text-right text-medium" style="color: #3498db;">
             Total story points - {{totalStoryPoints}}
         </div>
+        <div class="col-sm-12 title-bar task-pane-section-x-large text-right text-small" style="color: #3498db;">
+            <div *ngFor="let snap of snapBoard; let i = index;">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#collapse{{i}}"><span class="glyphicon glyphicon-collapse-down"></span>{{snap.Title}}</a>
+                            </h4>
+                        </div>
+                        <div id="collapse{{i}}" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table table-responsive table-striped">
+                                    <tr *ngFor="let pair of snap.data">
+                                        <td class="">{{pair.Key}}</td>
+                                        <td>{{pair.Value}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-1"></div>
 
     <div class="col-sm-9 result-pane">
         <!-- Result data pane -->
@@ -60,37 +83,41 @@
 
         <div class="row story-details" [ngClass]="showData">
             <!--<div class="col-sm-1"></div>-->
-            <div class="col-sm-12">
+            <div class="col-sm-12 scrollable">
                 <div *ngIf="!errorMessage">
-                    <table class="table table-responsive table-striped table-bordered" style="margin-left: -125px;">
+                    <table class="table table-responsive table-striped table-bordered" id="stories-table">
+
                         <thead>
-                        <tr>
-                            <th class="text-center">Project name</th>
-                            <th class="text-center">Sprint</th>
-                            <th class="text-center">Story description</th>
-                            <th class="text-center">Points assigned</th>
-                            <th class="text-center">Status</th>
-                        </tr>
+                            <tr>
+                                <th class="text-center">Project name</th>
+                                <th class="text-center">Sprint</th>
+                                <th class="text-center">Story description</th>
+                                <th class="text-center">Points assigned</th>
+                                <th class="text-center">Status</th>
+                            </tr>
                         </thead>
+
+
                         <tbody>
-                        <tr *ngFor="let story of stories">
-                            <td class="width-10 text-center">
-                                {{story.projectName}}
-                            </td>
-                            <td class="text-center width-10">
-                                {{story.sprintName}}
-                            </td>
-                            <td class="width-60">
-                                {{story.description}}
-                            </td>
-                            <td class="text-center width-5">
-                                {{story.storyPoint}}
-                            </td>
-                            <td class="text-center width-15">
-                                {{story.status}}
-                            </td>
-                        </tr>
+                            <tr *ngFor="let story of stories">
+                                <td class="width-10 text-center">
+                                    {{story.projectName}}
+                                </td>
+                                <td class="text-center width-10">
+                                    {{story.sprintName}}
+                                </td>
+                                <td class="width-60">
+                                    {{story.description}}
+                                </td>
+                                <td class="text-center width-5">
+                                    {{story.storyPoint}}
+                                </td>
+                                <td class="text-center width-15">
+                                    {{story.status}}
+                                </td>
+                            </tr>
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -113,6 +140,30 @@
         <div class="modal-content">
             <div class="modal-body">
                 <div class="text-center" style="font-size: x-large; margin-left: -70px;">{{currentStatus}} <div class="loader"></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-graph" class="modal fade" role="dialog" data-keyboard =false data-backdrop ="static">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Searched stories</h4>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tr>
+                        <td>
+                            <!--<canvas id="barChart"></canvas>-->
+                        </td>
+                        <td>
+
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
