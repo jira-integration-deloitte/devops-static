@@ -8,7 +8,6 @@ import {DevopsHttpService} from './devops-http.service';
 import {FormsModule} from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import {RouterModule, Routes} from '@angular/router';
-import {Ng2GoogleChartsModule} from 'ng2-google-charts';
 import {LocationStrategy, PathLocationStrategy} from '@angular/common';
 const appRoutes: Routes = [
     {
@@ -31,8 +30,7 @@ const appRoutes: Routes = [
       RouterModule.forRoot(appRoutes),
       FormsModule,
       BrowserModule,
-      HttpClientModule,
-      Ng2GoogleChartsModule
+      HttpClientModule
   ],
   providers: [
     HttpClient,
