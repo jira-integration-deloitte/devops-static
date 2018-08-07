@@ -11,6 +11,7 @@ declare  var $;
 })
 export class ReportComponent implements OnInit {
   static MSG = 'Select board and sprint to view stories';
+  static HOST = 'http://10.29.175.73:8088';
   boards: Array<any> = [];
   stories: Array<any> = [];
   sprints: Array<any> = [];
@@ -79,7 +80,7 @@ export class ReportComponent implements OnInit {
   loadBoards() {
     this.initMessage = ReportComponent.MSG;
     console.log('all board component loaded..');
-    const data = this.devopService.getData('http://localhost:8088/devops-service/allboards');
+    const data = this.devopService.getData(ReportComponent.HOST + '/devops-service/allboards');
     this.boards = [];
     this.errorMessage = null;
     this.stories = [];
@@ -104,7 +105,7 @@ export class ReportComponent implements OnInit {
       this.snapBoard = new Array<Snapshot>();
 
       console.log('Selected board - ' + this.boardId);
-       const url = 'http://localhost:8088/devops-service/board/' + this.boardId + '/sprints';
+       const url = ReportComponent.HOST + '/devops-service/board/' + this.boardId + '/sprints';
         const data = this.devopService.getData(url);
         this.errorMessage = null;
         this.stories = [];
@@ -140,6 +141,8 @@ export class ReportComponent implements OnInit {
 
       const sprintPoint = new Snapshot('Sprint wise points division');
       const statusPoint = new Snapshot('Status wise points division');
+      const sprintStoryCount = new Snapshot('Story count for each sprint');
+      const statusStoryCount = new Snapshot('Story count for respective status');
 
       this.loaderVisibility = true;
       console.log('Selected sprint - ' + this.sprintId);
@@ -147,7 +150,7 @@ export class ReportComponent implements OnInit {
       this.errorMessage = null;
       this.stories = [];
 
-      const url = 'http://localhost:8088/devops-service/board/' + this.boardId + '/sprint/' + this.sprintId + '/stories';
+      const url = ReportComponent.HOST + '/devops-service/board/' + this.boardId + '/sprint/' + this.sprintId + '/stories';
       const data = this.devopService.getData(url);
 
       data.subscribe(
@@ -162,6 +165,8 @@ export class ReportComponent implements OnInit {
                   this.totalStoryPoints = this.totalStoryPoints + issue.storyPoint;
                   this.prepareSnapshot(sprintPoint.Data, issue.sprintName, issue.storyPoint);
                   this.prepareSnapshot(statusPoint.Data, issue.status, issue.storyPoint);
+                  this.prepareSnapshot(sprintStoryCount.Data, issue.sprintName, 1);
+                  this.prepareSnapshot(statusStoryCount.Data, issue.status, 1);
               }
               if (this.stories.length === 0) {
                   this.errorMessage = 'No story was found for the selected sprint.';
@@ -181,6 +186,8 @@ export class ReportComponent implements OnInit {
           },
           () => {
               console.log(sprintPoint);
+              this.snapBoard.push(sprintStoryCount);
+              this.snapBoard.push(statusStoryCount);
               this.snapBoard.push(sprintPoint);
               this.snapBoard.push(statusPoint);
           }

@@ -20,7 +20,7 @@ export class LoginComponent {
     const password = this.password;
 
     const dataStr = '{"userName" : "' + userName + '", "password" : "' + password + '"}';
-    const url = 'http://localhost:8088/devops-service/app/login';
+    const url = 'http://10.29.175.73:8088/devops-service/app/login';
 
     console.log(dataStr);
 
