@@ -35,8 +35,10 @@
         <div class="col-sm-12 task-pane-section-small btn-group text-right">
             <button class="btn btn-sm btn-primary" (click)="loadStories()" [disabled]="sprintId === undefined">Get Stories</button>
             &nbsp;&nbsp;&nbsp;<!--[disabled]="!showGraph"-->
-            <button class="btn btn-sm btn-info" [disabled]="!showGraph" data-toggle="modal" data-target="#modal-graph">Show Graph</button>
-            <button class="btn btn-sm btn-primary" [disabled]="!showGraph" data-toggle="modal" data-target="#modal-graph">Download</button>
+            <button class="btn btn-sm btn-warning" [disabled]="true" data-toggle="modal" data-target="#modal-graph"
+                    data-toggle="tooltip" data-placement="top" title="This functionality will be available soon.">Show Graph</button>
+            <button class="btn btn-sm btn-warning" [disabled]="true" data-toggle="modal" data-target="#modal-graph"
+                    data-toggle="tooltip" data-placement="top" title="This functionality will be available soon.">Download</button>
         </div>
 
         <!-- Total story points -->
