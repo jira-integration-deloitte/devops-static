@@ -37,6 +37,22 @@
 							{{status.storyCount}}
 					</td>
 				</tr>
+				<tr class="total-row">
+					<td>Total</td>
+					<td>{{responseData.total.totalStories}}</td>
+					<td>{{responseData.total.totalStoryPointsSFDC}}</td>
+					<td>{{responseData.total.capabilitiesFieldPopulated}}</td>
+					<td>{{responseData.total.tshirtSizeFieldPopulated}}</td>
+
+
+					<td *ngFor="let status of responseData.total.statuslist">
+						{{status.storyCount}}
+					</td>
+
+					<td *ngFor="let status of responseData.total.groomingStatusList">
+						{{status.storyCount}}
+					</td>
+				</tr>
 			</tbody>
 		</table>
 	</div>
