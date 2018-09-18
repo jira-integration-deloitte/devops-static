@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DevopsHttpService} from '../devops-http.service';
 import {Snapshot} from '../snapshot';
 import {KeyValue} from '../key-value';
-declare  var $;
+import {Constants} from '../constants';
+import {FooterComponent} from '../footer/footer.component';
+declare var $;
 
 @Component({
   selector: 'app-report',
@@ -10,8 +12,6 @@ declare  var $;
   styleUrls: ['./report.component.css']
 })
 export class ReportComponent implements OnInit {
-  static MSG = 'Select board and sprint to view stories';
-  static HOST = 'http://10.29.175.73:8088';
   boards: Array<any> = [];
   stories: Array<any> = [];
   sprints: Array<any> = [];
@@ -22,48 +22,14 @@ export class ReportComponent implements OnInit {
   userFullName: String;
   loaderVisibility = false;
   showData: String;
-  currentStatus: String;
   showGraph = false;
-  initMessage = ReportComponent.MSG;
+  initMessage = Constants.MSG;
+  currentStatus = '';
 
   totalNumberOfStories = 0;
   snapBoard = new Array<Snapshot>();
 
-/*  barChart = new Chart('barChart', {
-      type: 'bar',
-      data: {
-          labels: ['Approved', 'Ready to test', 'Pending'],
-          datasets: [
-              {
-                  label: 'Story status',
-                  data: [30, 40, 12],
-                  fill: false,
-                  lineTension: 0.2,
-                  borderColor: 'red',
-                  borderWidth: 1
-              }
-          ]
-      },
-      options: {
-          title: {
-              text: 'Bar Chart',
-              display: true
-          },
-          scales: {
-              yAxes: [
-                  {
-                      ticks: {
-                          beginAtZero: true
-                      }
-                  }
-               ]
-          }
-
-      }
-  });*/
-
-
-  constructor(private devopService: DevopsHttpService) { }
+  constructor(private devopService: DevopsHttpService) {}
 
 
   ngOnInit() {
@@ -74,164 +40,156 @@ export class ReportComponent implements OnInit {
   }
 
   loadUser() {
-      this.userFullName = 'Ankit Saxena';
+    this.userFullName = 'Ankit Saxena';
   }
 
   loadBoards() {
-    this.initMessage = ReportComponent.MSG;
+    this.initMessage = Constants.MSG;
     console.log('all board component loaded..');
-    const data = this.devopService.getData(ReportComponent.HOST + '/devops-service/allboards');
+    const data = this.devopService.getData(Constants.HOST + '/devops-service/allboards');
     this.boards = [];
     this.errorMessage = null;
     this.stories = [];
     data.subscribe((resp: any) => {
-        if (resp != null) {
-          this.boards = resp.values;
-        }
+      if (resp != null) {
+        this.boards = resp.values;
+      }
     },
-        err => {
-            console.log('Error while fetching boards');
-            console.log(err);
-            this.errorMessage = err.toString();
-        });
+      err => {
+        console.log('Error while fetching boards');
+        console.log(err);
+        this.errorMessage = err.toString();
+      });
   }
 
   loadSprints() {
-      this.initMessage = ReportComponent.MSG;
-      this.showGraph = false;
-      this.currentStatus = 'Fetching sprints';
-      this.showData = 'hidden';
-      this.showLoader();
-      this.snapBoard = new Array<Snapshot>();
+    this.initMessage = Constants.MSG;
+    this.showGraph = false;
+    this.currentStatus = 'Fetching sprints';
+    this.showData = 'hidden';
+    this.showLoader();
+    this.snapBoard = new Array<Snapshot>();
 
-      console.log('Selected board - ' + this.boardId);
-       const url = ReportComponent.HOST + '/devops-service/board/' + this.boardId + '/sprints';
-        const data = this.devopService.getData(url);
-        this.errorMessage = null;
-        this.stories = [];
-        this.sprints = [];
-        this.sprintId = undefined;
-        data.subscribe(
-            (resp: any) => {
-                      if (resp != null) {
-                        this.sprints = resp.values;
-                        this.currentStatus = 'Arranging sprints';
-                      }
-                      this.currentStatus = 'Done';
-                      this.hideLoader();
-                    },
-            (error: any) => {
-                        console.log('Error occurred');
-                        console.log(error);
-                        this.hideLoader();
-                        this.errorMessage = 'This project does not have any sprint.'; /* error.toString(); */
-                        this.initMessage = undefined;
-            });
+    console.log('Selected board - ' + this.boardId);
+    const url = Constants.HOST + '/devops-service/board/' + this.boardId + '/sprints';
+    const data = this.devopService.getData(url);
+    this.errorMessage = null;
+    this.stories = [];
+    this.sprints = [];
+    this.sprintId = undefined;
+    data.subscribe(
+      (resp: any) => {
+        if (resp != null) {
+          this.sprints = resp.values;
+          this.currentStatus = 'Arranging sprints';
+        }
+        this.currentStatus = 'Done';
+        this.hideLoader();
+      },
+      (error: any) => {
+        console.log('Error occurred');
+        console.log(error);
+        this.hideLoader();
+        this.errorMessage = 'This project does not have any sprint.'; /* error.toString(); */
+        this.initMessage = undefined;
+      });
   }
 
   loadStories() {
-      this.initMessage = ReportComponent.MSG;
-      this.showGraph = false;
-      this.currentStatus = 'Fetching stories';
-      this.showData = 'hidden';
-      this.showLoader();
-      this.clearDataTable();
-      this.totalStoryPoints = 0;
-      this.snapBoard = new Array<Snapshot>();
+    this.initMessage = Constants.MSG;
+    this.showGraph = false;
+    //      this.footer.setCurrentStatus('Fetching stories');
+    this.showData = 'hidden';
+    this.currentStatus = 'Fetching stories';
+    this.showLoader();
+    this.totalStoryPoints = 0;
+    this.snapBoard = new Array<Snapshot>();
 
-      const sprintPoint = new Snapshot('Sprint wise points division');
-      const statusPoint = new Snapshot('Status wise points division');
-      const sprintStoryCount = new Snapshot('Story count for each sprint');
-      const statusStoryCount = new Snapshot('Story count for respective status');
+    const sprintPoint = new Snapshot('Sprint wise points division');
+    const statusPoint = new Snapshot('Status wise points division');
+    const sprintStoryCount = new Snapshot('Story count for each sprint');
+    const statusStoryCount = new Snapshot('Story count for respective status');
 
-      this.loaderVisibility = true;
-      console.log('Selected sprint - ' + this.sprintId);
+    this.loaderVisibility = true;
+    console.log('Selected sprint - ' + this.sprintId);
 
-      this.errorMessage = null;
-      this.stories = [];
+    this.errorMessage = null;
+    this.stories = [];
 
-      const url = ReportComponent.HOST + '/devops-service/board/' + this.boardId + '/sprint/' + this.sprintId + '/stories';
-      const data = this.devopService.getData(url);
+    const url = Constants.HOST + '/devops-service/board/' + this.boardId + '/sprint/' + this.sprintId + '/stories';
+    const data = this.devopService.getData(url);
 
-      data.subscribe(
-          (resp: any) => {
-              this.currentStatus = 'Arranging stories';
-              this.showData = 'visible';
-              if (resp !== null) {
-                  this.stories = resp.issues;
-              }
-              for (const issue of this.stories) {
-                  console.log('Looping after response -- ' + this.stories.length);
-                  this.totalStoryPoints = this.totalStoryPoints + issue.storyPoint;
-                  this.prepareSnapshot(sprintPoint.Data, issue.sprintName, issue.storyPoint);
-                  this.prepareSnapshot(statusPoint.Data, issue.status, issue.storyPoint);
-                  this.prepareSnapshot(sprintStoryCount.Data, issue.sprintName, 1);
-                  this.prepareSnapshot(statusStoryCount.Data, issue.status, 1);
-              }
-              if (this.stories.length === 0) {
-                  this.errorMessage = 'No story was found for the selected sprint.';
-                  this.showGraph = false;
-              } else {
-                  this.showGraph = true;
-              }
-              this.initMessage = undefined;
-              this.hideLoader();
-          },
-          (error: any) => {
-            console.log('Error occurred');
-            this.errorMessage = error.toString();
-            this.initMessage = undefined;
-            console.log(error);
-            this.hideLoader();
-          },
-          () => {
-              console.log(sprintPoint);
-              this.snapBoard.push(sprintStoryCount);
-              this.snapBoard.push(statusStoryCount);
-              this.snapBoard.push(sprintPoint);
-              this.snapBoard.push(statusPoint);
-          }
-      );
+    data.subscribe(
+      (resp: any) => {
+        this.currentStatus = 'Arranging stories';
+        this.showData = 'visible';
+        if (resp !== null) {
+          this.stories = resp.issues;
+        }
+        for (const issue of this.stories) {
+          console.log('Looping after response -- ' + this.stories.length);
+          this.totalStoryPoints = this.totalStoryPoints + issue.storyPoint;
+          this.prepareSnapshot(sprintPoint.Data, issue.sprintName, issue.storyPoint);
+          this.prepareSnapshot(statusPoint.Data, issue.status, issue.storyPoint);
+          this.prepareSnapshot(sprintStoryCount.Data, issue.sprintName, 1);
+          this.prepareSnapshot(statusStoryCount.Data, issue.status, 1);
+        }
+        if (this.stories.length === 0) {
+          this.errorMessage = 'No story was found for the selected sprint.';
+          this.showGraph = false;
+        } else {
+          this.showGraph = true;
+        }
+        this.initMessage = undefined;
+        this.hideLoader();
+      },
+      (error: any) => {
+        console.log('Error occurred');
+        this.errorMessage = error.toString();
+        this.initMessage = undefined;
+        console.log(error);
+        this.hideLoader();
+      },
+      () => {
+        console.log(sprintPoint);
+        this.snapBoard.push(sprintStoryCount);
+        this.snapBoard.push(statusStoryCount);
+        this.snapBoard.push(sprintPoint);
+        this.snapBoard.push(statusPoint);
+      }
+    );
   }
-    private prepareChart(issue: any) {
-
-    }
-
-    clearDataTable() {
-    }
-
-    getSprintName(sprintId: String) {
-      for (const sprint of this.sprints) {
-          if (sprint.id === sprintId) {
-              return sprint.name;
-          }
+  getSprintName(sprintId: String) {
+    for (const sprint of this.sprints) {
+      if (sprint.id === sprintId) {
+        return sprint.name;
       }
     }
-
-    showLoader() {
-        $('#open-modal-btn').click();
-    }
-    hideLoader() {
-        $('#close-modal-btn').click();
-    }
-
-    prepareSnapshot(data: KeyValue[], key, value) {
-      const sprint = key;
-      const storyPoint = value;
-      let found = false;
-      for (let i = 0; i < data.length; i++) {
-          const snap = data[i];
-          if (snap.Key === key) {
-              const oldVal = snap.Value;
-              snap.Value = oldVal + value;
-              found = true;
-          }
-      }
-      if (!found) {
-         const snap = new KeyValue(key, value);
-          data.push(snap);
+  }
+  prepareSnapshot(data: KeyValue[], key, value) {
+    const sprint = key;
+    const storyPoint = value;
+    let found = false;
+    for (let i = 0; i < data.length; i++) {
+      const snap = data[i];
+      if (snap.Key === key) {
+        const oldVal = snap.Value;
+        snap.Value = oldVal + value;
+        found = true;
       }
     }
+    if (!found) {
+      const snap = new KeyValue(key, value);
+      data.push(snap);
+    }
+  }
 
+  showLoader() {
+    console.log('Showing loader - ' + this.currentStatus);
+    $('#open-modal-btn').click();
+  }
+  hideLoader() {
+    $('#close-modal-btn').click();
+  }
 
 }
