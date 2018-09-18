@@ -29,6 +29,7 @@ export class SidebarComponent implements OnInit {
     showGraph = false;
     initMessage = Constants.MSG;
     snapBoard = new Array<Snapshot>();
+    testOnly = false;
 
     ngOnInit() {
         this.loadUser();
@@ -61,7 +62,8 @@ export class SidebarComponent implements OnInit {
     }
 
     loadSummary(boardId) {
-        this.tableData.loadTable(boardId);
+        console.log('testonly - ' + this.testOnly);
+        this.tableData.loadTable(boardId, this.testOnly);
     }
 
 }

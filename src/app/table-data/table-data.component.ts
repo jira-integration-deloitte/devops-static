@@ -13,9 +13,10 @@ export class TableDataComponent {
     groomingStatusColumnCount: number;
     responseData: any;
     showTable = false;
-    loadTable(boardId) {
+    loadTable(boardId, testOnly) {
+        $('#board-summary-table').DataTable();
         console.log('Loading summary - ' + boardId);
-        const url = Constants.HOST + '/devops-service/board/' + boardId + '/sprintsDetails?testOnly=true';
+        const url = Constants.HOST + '/devops-service/board/' + boardId + '/sprintsDetails' + (testOnly ? '?testOnly=true' : '');
         const data = this.service.getData(url);
         data.subscribe((response: any) => {
 
@@ -25,8 +26,14 @@ export class TableDataComponent {
            this.responseData = response;
 
             this.showTable = true;
-        });
+        },
+            (error: any) => {
+            console.log(error);
+        },
+            () => function() {
 
-        $('#board-summary-table').DataTable();
+            }
+        );
+
     }
 }

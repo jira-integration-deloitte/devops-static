@@ -15,6 +15,8 @@
 
  <!-- Buttons -->
  <div class="col-sm-12 text-right">
-     <button class="btn btn-lg btn-primary action-button" [disabled]="boardId === undefined" (click)="loadSummary(boardId)">Show Summary</button>
+     <div class="form-inline"><input type="checkbox" class="checkbox text-right" [(ngModel)]="testOnly" id="testOnly"><label for="testOnly">&nbsp;&nbsp;&nbsp;Test Only</label></div>
+
+     <button class="btn btn-lg btn-primary action-button" [disabled]="boardId === undefined && !testOnly" (click)="loadSummary(boardId)">Show Summary</button>
  </div>
 

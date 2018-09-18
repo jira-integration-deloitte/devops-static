@@ -4,7 +4,7 @@ table {
     white-space: nowrap;
 }
 table>thead>tr {
-    background-color: black;
+    background: linear-gradient(to bottom, #b3b3b3, #b3b3b3);
     color: white;
     font-size: medium;
     font-weight: bold;
