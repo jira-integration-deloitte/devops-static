@@ -1,0 +1,43 @@
+<app-header></app-header>
+<div class="row section" style="width: 98%;">
+	<div class="col-sm-3 task-pane">
+		<app-sidebar></app-sidebar>
+	</div>
+	<div class="col-sm-8">
+		<table class="table table-striped table-bordered text-center" id="board-summary-table" *ngIf="showTable">
+			<thead>
+				<tr>
+					<th rowspan="2" class="text-center">Sprint Name</th>
+					<th rowspan="2" class="text-center">Total Stories</th>
+					<th rowspan="2" class="text-center">Total Story Points (SFDC)</th>
+					<th rowspan="2" class="text-center">Capabilities Field Populated</th>
+					<th rowspan="2" class="text-center">T-shirt Size Field Populated</th>
+					<th [attr.colspan] = "statusColumnCount"  class="text-center">Status</th>
+					<th [attr.colspan] = "groomingStatusColumnCount" class="text-center">Grooming Status</th>
+				</tr>
+				<tr>
+					<th *ngFor="let coln of responseData.statuses">{{coln}}</th>
+					<th *ngFor="let coln of responseData.groomingStatuses">{{coln}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let sprint of responseData.sprintDetails; let sprintIndex=index">
+					<td>{{sprint.sprintName ? sprint.sprintName : 'Unnamed Sptint ' + sprintIndex}}</td>
+					<td>{{sprint.totalStories}}</td>
+					<td>{{sprint.totalStoryPointsSFDC}}</td>
+					<td>{{sprint.capabilitiesFieldPopulated}}</td>
+					<td>{{sprint.tshirtSizeFieldPopulated}}</td>
+
+
+					<td *ngFor="let status of sprint.statuslist">
+							{{status.storyCount}}
+					</td>
+
+					<td *ngFor="let status of sprint.groomingStatusList">
+							{{status.storyCount}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

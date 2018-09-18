@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {DevopsHttpService} from '../devops-http.service';
-import {compileComponent} from '@angular/compiler/src/render3/r3_view_compiler';
 import {Router} from '@angular/router';
+import {Constants} from '../constants';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +20,7 @@ export class LoginComponent {
     const password = this.password;
 
     const dataStr = '{"userName" : "' + userName + '", "password" : "' + password + '"}';
-    const url = 'http://10.29.175.73:8088/devops-service/app/login';
+    const url = Constants.HOST + '/devops-service/app/login';
 
     console.log(dataStr);
 

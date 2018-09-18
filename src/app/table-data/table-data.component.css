@@ -1,0 +1,16 @@
+table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+table>thead>tr {
+    background-color: black;
+    color: white;
+    font-size: medium;
+    font-weight: bold;
+}
+#board-summary-table {
+    margin-left: 25px;
+    width: 97%;
+    margin-top: 20px;
+}

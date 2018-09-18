@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
-
+.section {
+    margin-top:4px;
+    margin-left:15px;
+    border:1px solid #dedede;
+    border-radius: 5px;
+    box-shadow: 3px 3px #a8a8a8;
+}
 .loader {
     border: 6px solid #f3f3f3; /* Light grey */
     border-top: 6px solid #3498db; /* Blue */
@@ -104,4 +110,36 @@
     border-right: 1px solid #dedede;
     border-radius: 8px;
     margin-left: 15px;
+}
+
+.task-pane {
+  padding-top: 20px;
+  height: 85vh;
+  max-height: 85vh;
+  border-right: 1px solid #dedede;;
+}
+.task-pane-section-small {
+  height: 6%;
+  padding: 5px;
+  margin-top: 10px;
+  overflow: auto;
+}
+.task-pane-section-medium {
+  height: 12%;
+  padding: 5px;
+  margin-top: 10px;
+  overflow: auto;
+}
+
+.task-pane-section-large {
+  height: 20%;
+  padding: 5px;
+  margin-top: 10px;
+  overflow: auto;
+}
+.task-pane-section-x-large {
+  height: 35%;
+  padding: 10px;
+  margin-top: 10px;
+  overflow: auto;
 }

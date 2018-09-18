@@ -9,6 +9,11 @@ import {FormsModule} from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import {RouterModule, Routes} from '@angular/router';
 import {LocationStrategy, PathLocationStrategy} from '@angular/common';
+import { TableDataComponent } from './table-data/table-data.component';
+import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
+import { SidebarComponent } from './table-data/sidebar.component';
+
 const appRoutes: Routes = [
     {
         path: '',
@@ -17,6 +22,10 @@ const appRoutes: Routes = [
     {
       path: 'reports',
       component: ReportComponent
+    },
+    {
+        path: 'tabledata',
+        component: TableDataComponent
     }
 ];
 
@@ -24,7 +33,11 @@ const appRoutes: Routes = [
   declarations: [
       AppComponent,
       ReportComponent,
-      LoginComponent
+      LoginComponent,
+      TableDataComponent,
+      HeaderComponent,
+      FooterComponent,
+      SidebarComponent
   ],
   imports: [
       RouterModule.forRoot(appRoutes),
@@ -35,6 +48,9 @@ const appRoutes: Routes = [
   providers: [
     HttpClient,
     DevopsHttpService,
+    FooterComponent,
+    SidebarComponent,
+    TableDataComponent,
     {
         provide: LocationStrategy,
         useClass: PathLocationStrategy

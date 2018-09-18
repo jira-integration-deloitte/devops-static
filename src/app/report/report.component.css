@@ -1,10 +1,4 @@
-.section {
-  margin-top:4px;
-  margin-left:15px;
-  border:1px solid #dedede;
-  border-radius: 5px;
-  box-shadow: 3px 3px #a8a8a8;
-}
+
 .title-bar {
   color: #000000;
   font-weight: bold;
@@ -74,37 +68,7 @@ thead {
 .modal-text {
   margin-left: 110px;
 }
-.task-pane {
-  padding-top: 20px;
-  height: 85vh;
-  max-height: 85vh;
-  border-right: 1px solid #dedede;;
-}
-.task-pane-section-small {
-  height: 6%;
-  padding: 5px;
-  margin-top: 10px;
-  overflow: auto;
-}
-.task-pane-section-medium {
-  height: 12%;
-  padding: 5px;
-  margin-top: 10px;
-  overflow: auto;
-}
 
-.task-pane-section-large {
-  height: 20%;
-  padding: 5px;
-  margin-top: 10px;
-  overflow: auto;
-}
-.task-pane-section-x-large {
-  height: 25%;
-  padding: 10px;
-  margin-top: 10px;
-  overflow: auto;
-}
 .name-section {
   color: #3498db;
 }
@@ -113,7 +77,7 @@ thead {
 }
 
 .init-message {
-  font-size: 72px;
+  font-size: 48px;
   color: #3498db;
   border: 1px solid lightblue;
   border-radius: 7px;
@@ -131,4 +95,24 @@ thead {
   height:80vh;
   overflow-y:auto;
   width: 100%;
+}
+.action-buttons {
+  margin-top:8px;
+}
+.action-button {
+  width:32%;
+  margin-left:2px;
+  font-size: small;
+  text-align: center;
+}
+  @media screen and (max-height: 768px) and (max-width: 1024px){
+    .action-button {
+        width: 100%;
+        margin-left: 0px;
+        font-size: small;
+      margin-top:2px;
+    }
+    .init-message {
+      font-size: 40px;
+    }
 }
