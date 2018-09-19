@@ -9,6 +9,9 @@ table>thead>tr {
     font-size: medium;
     font-weight: bold;
 }
+.table>thead>tr>th{
+    vertical-align: center !important;
+}
 #board-summary-table {
     margin-left: 25px;
     width: 97%;
@@ -16,7 +19,10 @@ table>thead>tr {
 }
 
 .total-row{
-    background-color: #337ab7;
+    background-color: #337ab7 !important;
     color: white;
     font-size: large;
+}
+.vertical-center {
+    vertical-align: center !important;
 }
